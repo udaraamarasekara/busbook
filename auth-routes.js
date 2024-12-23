@@ -1,5 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const router = express.Router();
 const commutor = require('./commutor-routes');
