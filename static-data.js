@@ -27,3 +27,12 @@ const busses= [
 
 
 ]
+
+const routes=[
+    {id:1,from:'town-A',to:'town-B'},
+    {id:2,from:'town-B',to:'town-C'},
+    {id:3,from:'town-C',to:'town-D'},
+    {id:4,from:'town-D',to:'town-E'},
+    {id:5,from:'town-E',to:'town-A'}
+];
+
