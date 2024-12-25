@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const db = require('./database');
 const router = express.Router();
 const dotenv = require('dotenv');
-
+const validateUser = require('./validate-user')
 dotenv.config();
 
 // Login
@@ -39,17 +39,14 @@ router.post('/login',
   });
 });
 
-router.post('/register', async (req, res) => {
+
+
+router.post('/register',validateUser, async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: 'All fields are required'+name+email+password });
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
+ 
   const sql = 'INSERT INTO users (name, email, password ,role) VALUES (?, ?, ?, "commuter")';
-  db.query(sql, [name, email, hashedPassword], (err) => {
+  db.query(sql, [name, email, password], (err) => {
     if (err) {
       if (err.code === 'ER_DUP_ENTRY') {
         return res.status(400).json({ message: 'User already exists' });

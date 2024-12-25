@@ -7,6 +7,7 @@ dotenv.config();
 const router = express.Router();
 const commutor = require('./commutor-routes');
 const ntc = require('./ntc-routes');
+const admin = require('./admin-routes');
 const bus_owner = require('./bus-owner-routes');
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
@@ -24,8 +25,9 @@ const verifyToken = (req, res, next) => {
 router.use(verifyToken)  
 
 
-router.use('./commutor',commutor);
-router.use('./ntc',ntc);
-router.use('./bus_owner',bus_owner);
+router.use('/commutor',commutor);
+router.use('/ntc',ntc);
+router.use('/bus_owner',bus_owner);
+router.use('/admin',admin);
 
 module.exports = router;
