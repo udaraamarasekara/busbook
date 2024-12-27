@@ -27,7 +27,7 @@ router.use(verifyToken)
 
 router.use('/commutor',commutor);
 router.use('/ntc',ntc);
-router.use('/bus_owner',bus_owner);
+router.use('/bus-owner',bus_owner);
 router.use('/admin',admin);
 
 module.exports = router;

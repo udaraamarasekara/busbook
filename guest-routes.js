@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const db = require('./database');
 const router = express.Router();
 const dotenv = require('dotenv');
-const validateUser = require('./validate-user')
 dotenv.config();
+const validateUser = require('./validate-user')
 
 // Login
 router.post('/login',
