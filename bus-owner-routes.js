@@ -87,5 +87,124 @@ router.post('/trip', validateTrip, async (req, res) => {
   });
 });
 
+const validateUser = (req,res,next)=>{
+  const {trip}=req.query
+  const sql = 'SELECT busses.owner from trips  INNER JOIN busses ON trips.bus = busses.id WHERE trips.id = ?';
+  db.query(sql, [trip], (err,result) => {
+    if (err) {
+     
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    if(result[0].owner===req.userId)
+    {
+      return next();
+    }
+    return res.status(500).json({ message: 'Invalid Input', error: err });
+
+  });
+}
+
+const validateBusForTrip = (req,res,next)=>{
+  const {bus} = req.query
+  const sql = 'SELECT * FROM busses WHERE id = ? AND owner= ?';
+  db.query(sql, [bus,req.userId], (err,results) => {
+    if (err) {
+     
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    if(results.length===0) 
+    {
+      return res.status(201).json({ message: 'invalid request' });
+    }
+    next();
+  });
+}
+const validateTripForBookings = async (req, res, next) => {
+  const { trip } = req.query;
+
+  try {
+    
+    
+    const tripResults = await new Promise((resolve, reject) =>
+      db.query('SELECT * FROM trips WHERE id = ?', [trip], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      })
+    );
+    if (tripResults.length === 0) {
+      return res.status(400).json({ message: 'Invalid request: Trip not found' });
+    }
+    const busId = tripResults[0].bus;
+
+    // Query to check bus ownership
+    const busResults = await new Promise((resolve, reject) =>
+      db.query('SELECT * FROM busses WHERE id = ?', [busId], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      })
+    );
+    if (busResults.length === 0) {
+      return res.status(400).json({ message: 'Invalid request: Bus not found' });
+    }
+    if (busResults[0].owner !== req.userId) {
+      return res.status(403).json({ message: 'Unauthorized: You are not the owner of this bus' });
+    }
+    console.log(busResults[0].owner);
+
+    next();
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error', error: err });
+  }
+};
+
+router.put('/trip', validateTrip,validateUser, async (req, res) => {
+  const {start_at, end_at, start_from,bus } = req.body;
+  const {trip}= req.query;
+
+  const sql = 'UPDATE  trips SET start_at= ?, end_at= ?, start_from= ?,bus= ? WHERE id = ? ';
+  db.query(sql, [start_at, end_at, start_from,bus,trip], (err) => {
+    if (err) {
+     
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    res.status(201).json({ message: 'Trip uppdated successfully' });
+  });
+});
+
+router.get('/bus', async (req, res) => {
+     
+  const sql = 'SELECT * FROM busses WHERE owner= ?';
+  db.query(sql,[req.userId], (err,results) => {
+    if (err) {
+     
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+   return res.status(201).json(results);
+  });
+});
+
+router.get('/trip',validateBusForTrip, async (req, res) => {
+   const {bus} = req.query;
+  const sql = 'SELECT * FROM trips WHERE bus = ?';
+  db.query(sql,[bus], (err,results) => {
+    if (err) {
+     
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+   return res.status(201).json(results);
+  });
+});
+
+router.get('/booking',validateTripForBookings, async (req, res) => {
+  const {trip} = req.query;
+ const sql = 'SELECT * FROM bookings WHERE trip = ?';
+ db.query(sql,[trip], (err,results) => {
+   if (err) {
+    
+     return res.status(500).json({ message: 'Invalid Input', error: err });
+   }
+  return res.status(201).json(results);
+ });
+});
 
 module.exports = router;

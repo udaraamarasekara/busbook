@@ -57,6 +57,8 @@ const validateBus = async (req, res, next) => {
 };
 
 
+
+
 router.post('/register-bus-owner',validateUser, async (req, res) => {
   const {name, email, password } = req.body;
  
@@ -83,11 +85,11 @@ router.post('/register-bus-owner',validateUser, async (req, res) => {
 
 
 router.post('/bus', validateBus, async (req, res) => {
-    const {permitNo, owner, route,busno } = req.body;
+    const {permitNo, owner, route,busno,seatCount } = req.body;
    
   
-    const sql = 'INSERT INTO busses (permitNo, owner, route,busno) VALUES (?, ?, ?, ?)';
-    db.query(sql, [permitNo, owner, route,busno], (err) => {
+    const sql = 'INSERT INTO busses (permitNo, owner, route,busno,seatCount) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [permitNo, owner, route,busno,seatCount], (err) => {
       if (err) {
        
         return res.status(500).json({ message: 'Invalid Input', error: err });
@@ -96,7 +98,40 @@ router.post('/bus', validateBus, async (req, res) => {
     });
   });
 
+  router.get('/bus', async (req, res) => {
+     
+    const sql = 'SELECT * FROM busses';
+    db.query(sql, (err,results) => {
+      if (err) {
+       
+        return res.status(500).json({ message: 'Invalid Input', error: err });
+      }
+     return res.status(201).json(results);
+    });
+  });
 
+  router.get('/trip', async (req, res) => {
+     const {bus} = req.query;
+    const sql = 'SELECT * FROM trips WHERE bus = ?';
+    db.query(sql,[bus], (err,results) => {
+      if (err) {
+       
+        return res.status(500).json({ message: 'Invalid Input', error: err });
+      }
+     return res.status(201).json(results);
+    });
+  });
 
+  router.get('/booking', async (req, res) => {
+    const {trip} = req.query;
+   const sql = 'SELECT * FROM bookings WHERE trip = ?';
+   db.query(sql,[trip], (err,results) => {
+     if (err) {
+      
+       return res.status(500).json({ message: 'Invalid Input', error: err });
+     }
+    return res.status(201).json(results);
+   });
+ });
 
 module.exports = router;
