@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const db = require('./database'); // Replace with your actual database connection
 
 const validateUser = async (req, res, next) => {
