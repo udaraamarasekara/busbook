@@ -186,47 +186,52 @@ router.post('/trip', validateTrip, async (req, res) => {
 
 /**
  * @swagger
- * api/auth/bus-owner/trip:
+ * /api/auth/bus-owner/trip:
  *   put:
  *     summary: Update an existing bus trip
- *     tags: [Trips]
+ *     tags: 
+ *       - Trips
  *     security:
  *       - AuthorizationHeader: []
+ *     parameters:
  *       - in: query
  *         name: trip
+ *         description: The ID of the trip to be updated
  *         required: true
  *         schema:
  *           type: integer
  *           example: 1
- *       - in: body
- *         name: trip
- *         description: Updated trip details
- *         required: true
- *         schema:
- *           type: object
- *           properties:
- *             start_at:
- *               type: string
- *               format: date-time
- *               example: "2024-12-31T10:00:00Z"
- *             end_at:
- *               type: string
- *               format: date-time
- *               example: "2024-12-31T12:00:00Z"
- *             start_from:
- *               type: string
- *               example: "Colombo"
- *             bus:
- *               type: integer
- *               example: 1
+ *     requestBody:
+ *       description: Updated trip details
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               start_at:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-31T10:00:00Z"
+ *               end_at:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-31T12:00:00Z"
+ *               start_from:
+ *                 type: string
+ *                 example: "Colombo"
+ *               bus:
+ *                 type: integer
+ *                 example: 1
  *     responses:
  *       201:
  *         description: Trip updated successfully
  *       400:
- *         description: Invalid Input
+ *         description: Invalid input
  *       500:
- *         description: Database Error
+ *         description: Database error
  */
+
 router.put('/trip', validateTrip, validateUser, async (req, res) => {
   const { start_at, end_at, start_from, bus } = req.body;
   const { trip } = req.query;
@@ -266,14 +271,17 @@ router.get('/bus', async (req, res) => {
 
 /**
  * @swagger
- * api/auth/bus-owner/trip:
+ * /api/auth/bus-owner/trip:
  *   get:
  *     summary: Get trips for a specific bus
- *     tags: [Trips]
- *      security:
+ *     tags: 
+ *       - Trips
+ *     security:
  *       - AuthorizationHeader: []
+ *     parameters:
  *       - in: query
  *         name: bus
+ *         description: The ID of the bus for which trips are to be retrieved.
  *         required: true
  *         schema:
  *           type: integer
@@ -281,9 +289,34 @@ router.get('/bus', async (req, res) => {
  *     responses:
  *       200:
  *         description: List of trips for the bus
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: Trip ID
+ *                   busId:
+ *                     type: integer
+ *                     description: ID of the bus associated with the trip
+ *                   startTime:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Start time of the trip
+ *                   endTime:
+ *                     type: string
+ *                     format: date-time
+ *                     description: End time of the trip
+ *                   status:
+ *                     type: string
+ *                     description: Status of the trip (e.g., scheduled, completed)
  *       500:
- *         description: Database Error
+ *         description: Database error
  */
+
 router.get('/trip', validateBusForTrip, async (req, res) => {
   const { bus } = req.query;
   const sql = 'SELECT * FROM trips WHERE bus = ?';
@@ -294,18 +327,19 @@ router.get('/trip', validateBusForTrip, async (req, res) => {
     return res.status(200).json(results);
   });
 });
-
 /**
  * @swagger
- * api/auth/bus-owner/booking:
+ * /api/auth/bus-owner/booking:
  *   get:
  *     summary: Get bookings for a trip
- *     tags: [Bookings]
+ *     tags: 
+ *       - Bookings
  *     security:
  *       - AuthorizationHeader: []
  *     parameters:
  *       - in: query
  *         name: trip
+ *         description: The ID of the trip for which bookings are to be retrieved.
  *         required: true
  *         schema:
  *           type: integer
@@ -313,9 +347,29 @@ router.get('/trip', validateBusForTrip, async (req, res) => {
  *     responses:
  *       200:
  *         description: List of bookings for the trip
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: Booking ID
+ *                   passengerName:
+ *                     type: string
+ *                     description: Name of the passenger
+ *                   seatNumber:
+ *                     type: string
+ *                     description: Seat number assigned to the passenger
+ *                   status:
+ *                     type: string
+ *                     description: Booking status (e.g., confirmed, pending, canceled)
  *       500:
- *         description: Database Error
+ *         description: Database error
  */
+
 router.get('/booking', validateTripForBookings, async (req, res) => {
   const { trip } = req.query;
   const sql = 'SELECT * FROM bookings WHERE trip = ?';

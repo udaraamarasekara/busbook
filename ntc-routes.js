@@ -178,15 +178,28 @@ router.post('/bus', validateBus, async (req, res) => {
   });
 });
 
-// Swagger documentation for /bus (Fetching Buses)
 /**
  * @swagger
  * /api/auth/ntc/bus:
  *   get:
  *     summary: Get all buses
- *     tags: [auth/ntc]
+ *     tags: 
+ *       - auth/ntc
  *     security:
  *       - AuthorizationHeader: []
+ *     parameters:
+ *       - name: start_from
+ *         in: query
+ *         description: Starting point for the bus route.
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: end_from
+ *         in: query
+ *         description: Ending point for the bus route.
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: A list of buses
@@ -218,6 +231,7 @@ router.post('/bus', validateBus, async (req, res) => {
  *       500:
  *         description: Database error
  */
+
 router.get('/bus', async (req, res) => {
   const sql = 'SELECT * FROM busses';
   db.query(sql, (err, results) => {
@@ -237,9 +251,9 @@ router.get('/bus', async (req, res) => {
  *     tags: [auth/ntc]
  *     security:
  *       - AuthorizationHeader: []
- *       - in: query
- *         name: bus
- *         required: true
+ *     parameters:
+ *         -name: bus
+ *         -required: true
  *         schema:
  *           type: integer
  *         description: The ID of the bus
@@ -288,6 +302,7 @@ router.get('/trip', async (req, res) => {
  *     tags: [auth/ntc]
  *     security:
  *       - AuthorizationHeader: []
+ *     parameters:
  *       - in: query
  *         name: trip
  *         required: true

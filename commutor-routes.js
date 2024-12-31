@@ -21,6 +21,7 @@ const router = express.Router();
  *     tags: [Bus]
  *     security:
  *       - AuthorizationHeader: []
+ *     parameters:
  *       - in: query
  *         name: start_from
  *         required: true
@@ -101,37 +102,7 @@ router.get('/bus', async (req, res) => {
     }
 });
 
-/**
- * @swagger
- * /api/auth/commutor/book:
- *   post:
- *     summary: Book seats for a trip
- *     tags: [Bus]
-*      security:
- *       - AuthorizationHeader: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               seats:
- *                 type: array
- *                 items:
- *                   type: integer
- *                   example: 1
- *               trip:
- *                 type: integer
- *                 example: 101
- *     responses:
- *       200:
- *         description: Booking placed successfully
- *       400:
- *         description: Invalid seat or trip
- *       500:
- *         description: Server error
- */
+
 router.post('/book', validateBooking, async (req, res) => {
     const { seats, trip } = req.body;
     const userId = req.userId;
@@ -151,30 +122,40 @@ router.post('/book', validateBooking, async (req, res) => {
 
 /**
  * @swagger
- * /api/auth/commutor/seat:
- *   get:
- *     summary: Get all booked seats for a trip
- *     tags: [Bus]
+ * /api/auth/commutor/book:
+ *   post:
+ *     summary: Book seats for a trip
+ *     tags: 
+ *       - Bus
  *     security:
  *       - AuthorizationHeader: []
- *       - in: query
- *         name: trip
- *         required: true
- *         schema:
- *           type: integer
- *           example: 101
+ *     requestBody:
+ *       description: Details of the seats to be booked and the trip ID
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               seats:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: List of seat numbers to be booked
+ *                 example: [1, 2, 3]
+ *               trip:
+ *                 type: integer
+ *                 description: The ID of the trip for booking
+ *                 example: 101
  *     responses:
  *       200:
- *         description: List of booked seats for the trip
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
+ *         description: Booking placed successfully
+ *       400:
+ *         description: Invalid seat or trip
  *       500:
  *         description: Server error
  */
+
 router.get('/seat', async (req, res) => {
     const trip = req.query.trip;
     const sql = 'SELECT * FROM bookings WHERE trip = ?';
