@@ -141,14 +141,8 @@ const validateTrip = (req, res, next) => {
  *   post:
  *     summary: Add a new bus trip
  *     tags: [Trips]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  * 
  *       - in: body
  *         name: trip
@@ -196,14 +190,8 @@ router.post('/trip', validateTrip, async (req, res) => {
  *   put:
  *     summary: Update an existing bus trip
  *     tags: [Trips]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *       - in: query
  *         name: trip
  *         required: true
@@ -258,14 +246,8 @@ router.put('/trip', validateTrip, validateUser, async (req, res) => {
  *   get:
  *     summary: Get buses owned by the current user
  *     tags: [Buses]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *     responses:
  *       200:
  *         description: List of buses
@@ -288,14 +270,8 @@ router.get('/bus', async (req, res) => {
  *   get:
  *     summary: Get trips for a specific bus
  *     tags: [Trips]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *      security:
+ *       - AuthorizationHeader: []
  *       - in: query
  *         name: bus
  *         required: true
@@ -325,6 +301,8 @@ router.get('/trip', validateBusForTrip, async (req, res) => {
  *   get:
  *     summary: Get bookings for a trip
  *     tags: [Bookings]
+ *     security:
+ *       - AuthorizationHeader: []
  *     parameters:
  *       - in: query
  *         name: trip

@@ -19,14 +19,8 @@ const router = express.Router();
  *   get:
  *     summary: Get bus trips between two towns
  *     tags: [Bus]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *       - in: query
  *         name: start_from
  *         required: true
@@ -113,6 +107,8 @@ router.get('/bus', async (req, res) => {
  *   post:
  *     summary: Book seats for a trip
  *     tags: [Bus]
+*      security:
+ *       - AuthorizationHeader: []
  *     requestBody:
  *       required: true
  *       content:
@@ -159,14 +155,8 @@ router.post('/book', validateBooking, async (req, res) => {
  *   get:
  *     summary: Get all booked seats for a trip
  *     tags: [Bus]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *       - in: query
  *         name: trip
  *         required: true
@@ -202,14 +192,8 @@ router.get('/seat', async (req, res) => {
  *   delete:
  *     summary: Delete a booking
  *     tags: [Bus]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *     requestBody:
  *       required: true
  *       content:

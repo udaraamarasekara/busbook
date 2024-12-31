@@ -20,14 +20,9 @@ router.use(verifyAdmin);
  *     summary: Register a new NTC user
  *     tags: [Users]
  *     description: Register a new user with "ntc" role.
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
+ * 
  *     requestBody:
  *       required: true
  *       content:

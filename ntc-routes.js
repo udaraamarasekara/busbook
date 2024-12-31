@@ -68,14 +68,8 @@ const validateBus = async (req, res, next) => {
  *   post:
  *     summary: Register a new bus owner
  *     tags: [Auth]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *     requestBody:
  *       required: true
  *       content:
@@ -134,14 +128,8 @@ router.post('/register-bus-owner', validateUser, async (req, res) => {
  *   post:
  *     summary: Add a new bus
  *     tags: [auth/ntc]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *     requestBody:
  *       required: true
  *       content:
@@ -197,14 +185,8 @@ router.post('/bus', validateBus, async (req, res) => {
  *   get:
  *     summary: Get all buses
  *     tags: [auth/ntc]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *     responses:
  *       200:
  *         description: A list of buses
@@ -253,14 +235,8 @@ router.get('/bus', async (req, res) => {
  *   get:
  *     summary: Get trips for a specific bus
  *     tags: [auth/ntc]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *       - in: query
  *         name: bus
  *         required: true
@@ -310,14 +286,8 @@ router.get('/trip', async (req, res) => {
  *   get:
  *     summary: Get bookings for a specific trip
  *     tags: [auth/ntc]
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: Bearer token for authentication
- *         example: Bearer <your-token-here>
+ *     security:
+ *       - AuthorizationHeader: []
  *       - in: query
  *         name: trip
  *         required: true
