@@ -1,3 +1,4 @@
+// guest-routes.js
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -5,11 +6,58 @@ const db = require('./database');
 const router = express.Router();
 const dotenv = require('dotenv');
 dotenv.config();
-const validateUser = require('./validate-user')
+const validateUser = require('./validate-user');
 
-// Login
-router.post('/login',
-   (req, res) => {
+/**
+ * @swagger
+ * tags:
+ *   name: guest
+ *   description: guestentication operations
+ */
+
+/**
+ * @swagger
+ * /api/guest/login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [guest]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 token:
+ *                   type: string
+ *                   example: your.jwt.token.here
+ *       400:
+ *         description: All fields are required
+ *       401:
+ *         description: Invalid credentials
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Database error
+ */
+router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -38,13 +86,40 @@ router.post('/login',
   });
 });
 
-
-
-router.post('/register',validateUser, async (req, res) => {
+/**
+ * @swagger
+ * /api/guest/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [guest]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 example: john@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *       400:
+ *         description: User already exists or missing fields
+ *       500:
+ *         description: Database error
+ */
+router.post('/register', validateUser, async (req, res) => {
   const { name, email, password } = req.body;
 
- 
-  const sql = 'INSERT INTO users (name, email, password ,role) VALUES (?, ?, ?, "commuter")';
+  const sql = 'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "commuter")';
   db.query(sql, [name, email, password], (err) => {
     if (err) {
       if (err.code === 'ER_DUP_ENTRY') {
@@ -55,6 +130,5 @@ router.post('/register',validateUser, async (req, res) => {
     res.status(201).json({ message: 'User registered successfully' });
   });
 });
-
 
 module.exports = router;

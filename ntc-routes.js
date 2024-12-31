@@ -1,14 +1,19 @@
 const express = require('express');
-const validateUser = require('./validate-user')
+const validateUser = require('./validate-user');
 const bcrypt = require('bcryptjs');
 const db = require('./database');
-
 const router = express.Router();
+
+// Middleware for verifying NTC role
 const verifyNtc = (req, res, next) => {
-    if (req.role!='ntc') return res.status(401).json({ message: 'Unauthorized' }); 
-    next();
+  if (req.role !== 'ntc') return res.status(401).json({ message: 'Unauthorized' });
+  next();
 };
-router.use(verifyNtc)  
+
+// Use verifyNtc middleware
+router.use(verifyNtc);
+
+// Middleware for validating bus data
 const validateBus = async (req, res, next) => {
   const { permitNo, owner, busno, route } = req.body;
 
@@ -56,14 +61,53 @@ const validateBus = async (req, res, next) => {
   }
 };
 
+// Swagger documentation for /register-bus-owner
+/**
+ * @swagger
+ * /api/auth/ntc/register-bus-owner:
+ *   post:
+ *     summary: Register a new bus owner
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Bearer token for authentication
+ *         example: Bearer <your-token-here>
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the bus owner
+ *               email:
+ *                 type: string
+ *                 description: The email address of the bus owner
+ *               password:
+ *                 type: string
+ *                 description: The password for the bus owner
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *       400:
+ *         description: Invalid data or user already exists
+ *       500:
+ *         description: Database error
+ */
+router.post('/register-bus-owner', validateUser, async (req, res) => {
+  const { name, email, password } = req.body;
 
-
-
-router.post('/register-bus-owner',validateUser, async (req, res) => {
-  const {name, email, password } = req.body;
- 
-  if(name.length > 50 || email.length > 50 || password.length > 50 )
-  {
+  if (name.length > 50 || email.length > 50 || password.length > 50) {
     return res.status(400).json({ message: 'Invalid data' });
   }
   if (!name || !email || !password) {
@@ -71,7 +115,7 @@ router.post('/register-bus-owner',validateUser, async (req, res) => {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const sql = 'INSERT INTO users (name, email, password,role) VALUES (?, ?, ?, "bus-owner")';
+  const sql = 'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "bus-owner")';
   db.query(sql, [name, email, hashedPassword], (err) => {
     if (err) {
       if (err.code === 'ER_DUP_ENTRY') {
@@ -83,55 +127,237 @@ router.post('/register-bus-owner',validateUser, async (req, res) => {
   });
 });
 
-
+// Swagger documentation for /bus (Adding a Bus)
+/**
+ * @swagger
+ * /api/auth/ntc/bus:
+ *   post:
+ *     summary: Add a new bus
+ *     tags: [auth/ntc]
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Bearer token for authentication
+ *         example: Bearer <your-token-here>
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               permitNo:
+ *                 type: string
+ *                 description: Bus permit number
+ *               owner:
+ *                 type: integer
+ *                 description: ID of the bus owner
+ *               route:
+ *                 type: integer
+ *                 description: ID of the route
+ *               busno:
+ *                 type: string
+ *                 description: Bus number
+ *               seatCount:
+ *                 type: integer
+ *                 description: Number of seats in the bus
+ *             required:
+ *               - permitNo
+ *               - owner
+ *               - route
+ *               - busno
+ *               - seatCount
+ *     responses:
+ *       201:
+ *         description: Bus added successfully
+ *       400:
+ *         description: Missing or invalid data
+ *       500:
+ *         description: Database error
+ */
 router.post('/bus', validateBus, async (req, res) => {
-    const {permitNo, owner, route,busno,seatCount } = req.body;
-   
-  
-    const sql = 'INSERT INTO busses (permitNo, owner, route,busno,seatCount) VALUES (?, ?, ?, ?, ?)';
-    db.query(sql, [permitNo, owner, route,busno,seatCount], (err) => {
-      if (err) {
-       
-        return res.status(500).json({ message: 'Invalid Input', error: err });
-      }
-      res.status(201).json({ message: 'Bus added successfully' });
-    });
-  });
+  const { permitNo, owner, route, busno, seatCount } = req.body;
 
-  router.get('/bus', async (req, res) => {
-     
-    const sql = 'SELECT * FROM busses';
-    db.query(sql, (err,results) => {
-      if (err) {
-       
-        return res.status(500).json({ message: 'Invalid Input', error: err });
-      }
-     return res.status(201).json(results);
-    });
+  const sql = 'INSERT INTO busses (permitNo, owner, route, busno, seatCount) VALUES (?, ?, ?, ?, ?)';
+  db.query(sql, [permitNo, owner, route, busno, seatCount], (err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    res.status(201).json({ message: 'Bus added successfully' });
   });
+});
 
-  router.get('/trip', async (req, res) => {
-     const {bus} = req.query;
-    const sql = 'SELECT * FROM trips WHERE bus = ?';
-    db.query(sql,[bus], (err,results) => {
-      if (err) {
-       
-        return res.status(500).json({ message: 'Invalid Input', error: err });
-      }
-     return res.status(201).json(results);
-    });
+// Swagger documentation for /bus (Fetching Buses)
+/**
+ * @swagger
+ * /api/auth/ntc/bus:
+ *   get:
+ *     summary: Get all buses
+ *     tags: [auth/ntc]
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Bearer token for authentication
+ *         example: Bearer <your-token-here>
+ *     responses:
+ *       200:
+ *         description: A list of buses
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: Bus ID
+ *                   permitNo:
+ *                     type: string
+ *                     description: Bus permit number
+ *                   owner:
+ *                     type: integer
+ *                     description: ID of the bus owner
+ *                   route:
+ *                     type: integer
+ *                     description: ID of the route
+ *                   busno:
+ *                     type: string
+ *                     description: Bus number
+ *                   seatCount:
+ *                     type: integer
+ *                     description: Number of seats in the bus
+ *       500:
+ *         description: Database error
+ */
+router.get('/bus', async (req, res) => {
+  const sql = 'SELECT * FROM busses';
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    return res.status(200).json(results);
   });
+});
 
-  router.get('/booking', async (req, res) => {
-    const {trip} = req.query;
-   const sql = 'SELECT * FROM bookings WHERE trip = ?';
-   db.query(sql,[trip], (err,results) => {
-     if (err) {
-      
-       return res.status(500).json({ message: 'Invalid Input', error: err });
-     }
-    return res.status(201).json(results);
-   });
- });
+// Swagger documentation for /trip (Fetching Trips for a Bus)
+/**
+ * @swagger
+ * /api/auth/ntc/trip:
+ *   get:
+ *     summary: Get trips for a specific bus
+ *     tags: [auth/ntc]
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Bearer token for authentication
+ *         example: Bearer <your-token-here>
+ *       - in: query
+ *         name: bus
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the bus
+ *     responses:
+ *       200:
+ *         description: A list of trips for the bus
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: Trip ID
+ *                   bus:
+ *                     type: integer
+ *                     description: ID of the bus
+ *                   startTime:
+ *                     type: string
+ *                     description: Start time of the trip
+ *                   endTime:
+ *                     type: string
+ *                     description: End time of the trip
+ *       500:
+ *         description: Database error
+ */
+router.get('/trip', async (req, res) => {
+  const { bus } = req.query;
+  const sql = 'SELECT * FROM trips WHERE bus = ?';
+  db.query(sql, [bus], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    return res.status(200).json(results);
+  });
+});
+
+// Swagger documentation for /booking (Fetching Bookings for a Trip)
+/**
+ * @swagger
+ * /api/auth/ntc/booking:
+ *   get:
+ *     summary: Get bookings for a specific trip
+ *     tags: [auth/ntc]
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Bearer token for authentication
+ *         example: Bearer <your-token-here>
+ *       - in: query
+ *         name: trip
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the trip
+ *     responses:
+ *       200:
+ *         description: A list of bookings for the trip
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: Booking ID
+ *                   trip:
+ *                     type: integer
+ *                     description: Trip ID
+ *                   passengerName:
+ *                     type: string
+ *                     description: Name of the passenger
+ *                   seatNo:
+ *                     type: integer
+ *                     description: Seat number
+ *       500:
+ *         description: Database error
+ */
+router.get('/booking', async (req, res) => {
+  const { trip } = req.query;
+  const sql = 'SELECT * FROM bookings WHERE trip = ?';
+  db.query(sql, [trip], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    return res.status(200).json(results);
+  });
+});
 
 module.exports = router;
