@@ -13,6 +13,7 @@ dotenv.config();
 const app = express();
 
 const options = {
+  openapi: '3.0.0',
   definition:{
     openApi:"3.0.0",
     info:{
