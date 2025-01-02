@@ -345,4 +345,43 @@ router.get('/booking', async (req, res) => {
   });
 });
 
+
+// Swagger documentation for /booking (Fetching Bookings for a Trip)
+/**
+ * @swagger
+ * /api/auth/ntc/bus-owners:
+ *   get:
+ *     summary: Get bookings for a specific trip
+ *     tags: [auth/ntc]
+ *     security:
+ *       - AuthorizationHeader: []
+ *     responses:
+ *       200:
+ *         description: A list of bus-owners for the trip
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: user
+ *                   name:
+ *                     type: text
+ *                     description: name
+ *       500:
+ *         description: Database error
+ */
+router.get('/bus-owners', async (req, res) => {
+  const sql = 'SELECT * FROM users WHERE role = "bus-owner"';
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    return res.status(200).json(results);
+  });
+});
+
 module.exports = router;
