@@ -339,7 +339,7 @@ router.get('/trip', validateBusForTrip, async (req, res) => {
  *     parameters:
  *       - in: query
  *         name: trip
- *         description: The ID of the trip for which bookings are to be retrieved.
+ *         id: The ID of the route to be retrieved.
  *         required: true
  *         schema:
  *           type: integer
@@ -357,9 +357,9 @@ router.get('/trip', validateBusForTrip, async (req, res) => {
  *                   id:
  *                     type: integer
  *                     description: Booking ID
- *                   passengerName:
+ *                   Rouote    :
  *                     type: string
- *                     description: Name of the passenger
+ *                     description: town one
  *                   seatNumber:
  *                     type: string
  *                     description: Seat number assigned to the passenger
@@ -394,14 +394,14 @@ router.get('/route', async (req, res) => {
  *     parameters:
  *       - in: query
  *         name: route
- *         description: The ID of the route .
+ *         description: The ID of the route  to be retrieved.
  *         required: true
  *         schema:
  *           type: integer
  *           example: 1
  *     responses:
  *       200:
- *         description: List of trips for the bus
+ *         description: List of routes for the bus
  *         content:
  *           application/json:
  *             schema:
@@ -411,21 +411,13 @@ router.get('/route', async (req, res) => {
  *                 properties:
  *                   id:
  *                     type: integer
- *                     description: Trip ID
- *                   busId:
+ *                     description: Route ID
+ *                   town_one:
  *                     type: integer
- *                     description: ID of the bus associated with the trip
- *                   startTime:
- *                     type: string
- *                     format: date-time
- *                     description: Start time of the trip
- *                   endTime:
- *                     type: string
- *                     format: date-time
- *                     description: End time of the trip
- *                   status:
- *                     type: string
- *                     description: Status of the trip (e.g., scheduled, completed)
+ *                     description: town one
+ *                   town_two:
+ *                     
+ *                     description:town two
  *       500:
  *         description: Database error
  */
