@@ -370,15 +370,76 @@ router.get('/trip', validateBusForTrip, async (req, res) => {
  *         description: Database error
  */
 
-router.get('/booking', validateTripForBookings, async (req, res) => {
-  const { trip } = req.query;
-  const sql = 'SELECT * FROM bookings WHERE trip = ?';
-  db.query(sql, [trip], (err, results) => {
+router.get('/route', async (req, res) => {
+  const { id } = req.query;
+  const sql = 'SELECT * FROM routes WHERE id = ?';
+  db.query(sql, [id], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Invalid Input', error: err });
     }
     return res.status(200).json(results);
   });
 });
+
+
+/**
+ * @swagger
+ * /api/auth/bus-owner/routes:
+ *   get:
+ *     summary: Get trips for a specific bus
+ *     tags: 
+ *       - Trips
+ *     security:
+ *       - AuthorizationHeader: []
+ *     parameters:
+ *       - in: query
+ *         name: route
+ *         description: The ID of the route .
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: List of trips for the bus
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: Trip ID
+ *                   busId:
+ *                     type: integer
+ *                     description: ID of the bus associated with the trip
+ *                   startTime:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Start time of the trip
+ *                   endTime:
+ *                     type: string
+ *                     format: date-time
+ *                     description: End time of the trip
+ *                   status:
+ *                     type: string
+ *                     description: Status of the trip (e.g., scheduled, completed)
+ *       500:
+ *         description: Database error
+ */
+
+router.get('/trip', validateBusForTrip, async (req, res) => {
+  const { bus } = req.query;
+  const sql = 'SELECT * FROM trips WHERE bus = ?';
+  db.query(sql, [bus], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Invalid Input', error: err });
+    }
+    return res.status(200).json(results);
+  });
+});
+
 
 module.exports = router;
