@@ -170,6 +170,52 @@ router.get('/seat', async (req, res) => {
 /**
  * @swagger
  * /api/auth/commutor/book:
+ *   post:
+ *     summary: Book seats for a trip
+ *     tags: 
+ *       - Bus
+ *     security:
+ *       - AuthorizationHeader: []
+ *     requestBody:
+ *       description: Details of the seats to be booked and the trip ID
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               seats:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: List of seat numbers to be booked
+ *                 example: [1, 2, 3]
+ *               trip:
+ *                 type: integer
+ *                 description: The ID of the trip for booking
+ *                 example: 101
+ *     responses:
+ *       200:
+ *         description: Booking placed successfully
+ *       400:
+ *         description: Invalid seat or trip
+ *       500:
+ *         description: Server error
+ */
+
+router.get('/routes', async (req, res) => {
+    const trip = req.query.trip;
+    const sql = 'SELECT * FROM routes';
+    db.query(sql, [trip], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Invalid Input', error: err });
+        }
+        return res.status(200).json(results);
+    });
+});
+/**
+ * @swagger
+ * /api/auth/commutor/book:
  *   delete:
  *     summary: Delete a booking
  *     tags: [Bus]
