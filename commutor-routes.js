@@ -83,7 +83,7 @@ router.get('/bus', async (req, res) => {
         const routeId = routeResult[0].id;
 
         const tripsQuery = `
-            SELECT trips.start_at, trips.end_at, trips.id, busses.busno
+            SELECT trips.start_at, trips.end_at, trips.id, busses.busno, busses.seatCount
             FROM trips 
             INNER JOIN busses ON trips.bus = busses.id 
             WHERE trips.start_from = ? AND trips.start_at > ? AND busses.route = ?
