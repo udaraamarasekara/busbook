@@ -338,4 +338,17 @@ async function validateBooking(req, res,next) {
     next();
 }
 
+router.get('/bookings', async (req, res) => {
+    const trip = req.query.trip;
+    const sql = 'SELECT bookings.trip, bookings.seat bookings.user bookings.id ,trips.start_at, trips.end_at,trips.start_from FROM bookings INNER JOIN trips ON trips.id =bookings.trip WHERE bookings.user = ?';
+    db.query(sql, [req.userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Invalid Input', error: err });
+        }
+        return res.status(200).json(results);
+    });
+});
+
+
+
 module.exports = router;
