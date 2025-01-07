@@ -387,30 +387,48 @@ router.get('/bus-owners', async (req, res) => {
 // Swagger documentation for /booking (Fetching Bookings for a Trip)
 /**
  * @swagger
- * /api/auth/ntc/routes:
- *   get:
- *     summary: Get bookings for a specific trip
- *     tags: [auth/ntc]
- *     security:
- *       - AuthorizationHeader: []
- *     responses:
- *       200:
- *         description: A list of routes 
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     description: user
- *                   name:
- *                     type: text
- *                     description: name
- *       500:
- *         description: Database error
+paths:
+  /api/auth/ntc/routes:
+    get:
+      summary: Get all routes
+      description: Retrieve all available routes from the database.
+      tags:
+        - Routes
+      parameters: []
+      responses:
+        '200':
+          description: Successfully retrieved all routes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The unique identifier of the route.
+                    name:
+                      type: string
+                      description: The name of the route.
+                    description:
+                      type: string
+                      description: The description of the route.
+                      nullable: true
+        '500':
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid Input
+                  error:
+                    type: string
+                    example: Database query error
+       description: Database error
  */
 router.get('/routes', async (req, res) => {
   const sql = 'SELECT * FROM routes';
