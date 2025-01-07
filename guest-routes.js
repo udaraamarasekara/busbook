@@ -117,8 +117,8 @@ router.post('/login', (req, res) => {
  *         description: Database error
  */
 router.post('/register', validateUser, async (req, res) => {
-  const { name, email, password } = req.body;
 
+  const { name, email, password } = req.body;
   const sql = 'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "commuter")';
   db.query(sql, [name, email, password], (err) => {
     if (err) {

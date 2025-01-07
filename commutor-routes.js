@@ -158,76 +158,77 @@ router.post('/book', validateBooking, async (req, res) => {
 
 /**
  * @swagger
-paths:
-  /seat:
-    get:
-      summary: Get current bookings for a trip
-      description: Retrieve all bookings for a specific trip from the database.
-      tags:
-        - Bookings
-      parameters:
-        - name: trip
-          in: query
-          required: true
-          description: The trip ID for which to retrieve bookings.
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully retrieved bookings.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The unique identifier of the booking.
-                    trip:
-                      type: string
-                      description: The trip ID associated with the booking.
-                    user_id:
-                      type: integer
-                      description: The unique identifier of the user who made the booking.
-                    seat_number:
-                      type: string
-                      description: The seat number assigned in the booking.
-                    status:
-                      type: string
-                      description: The status of the booking (e.g., confirmed, canceled).
-                    created_at:
-                      type: string
-                      format: date-time
-                      description: The date and time when the booking was made.
-        '400':
-          description: Missing or invalid trip parameter.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid Input
-                  error:
-                    type: string
-                    example: Trip parameter is missing or invalid.
-        '500':
-          description: Server error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid Input
-                  error:
-                    type: string
-                    example: Database query error
+ * paths:
+ *   /seat:
+ *     get:
+ *       summary: Get current bookings for a trip
+ *       description: Retrieve all bookings for a specific trip from the database.
+ *       tags:
+ *         - Bookings
+ *       parameters:
+ *         - name: trip
+ *           in: query
+ *           required: true
+ *           description: The trip ID for which to retrieve bookings.
+ *           schema:
+ *             type: string
+ *       responses:
+ *         '200':
+ *           description: Successfully retrieved bookings.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The unique identifier of the booking.
+ *                     trip:
+ *                       type: string
+ *                       description: The trip ID associated with the booking.
+ *                     user_id:
+ *                       type: integer
+ *                       description: The unique identifier of the user who made the booking.
+ *                     seat_number:
+ *                       type: string
+ *                       description: The seat number assigned in the booking.
+ *                     status:
+ *                       type: string
+ *                       description: The status of the booking (e.g., confirmed, canceled).
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                       description: The date and time when the booking was made.
+ *         '400':
+ *           description: Missing or invalid trip parameter.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: Invalid Input
+ *                   error:
+ *                     type: string
+ *                     example: Trip parameter is missing or invalid.
+ *         '500':
+ *           description: Server error occurred while processing the request.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: An unexpected error occurred.
+ *                   error:
+ *                     type: string
+ *                     example: Database query error.
  */
+
 router.get('/seat', async (req, res) => {
     const trip = req.query.trip;
     const sql = 'SELECT * FROM bookings WHERE trip = ?';
@@ -240,48 +241,49 @@ router.get('/seat', async (req, res) => {
 });
 /**
  * @swagger
-paths:
-  /routes:
-    get:
-      summary: Get all routes
-      description: Retrieve all available routes from the database.
-      tags:
-        - Routes
-      parameters: []
-      responses:
-        '200':
-          description: Successfully retrieved all routes.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The unique identifier of the route.
-                    name:
-                      type: string
-                      description: The name of the route.
-                    description:
-                      type: string
-                      description: The description of the route.
-                      nullable: true
-        '500':
-          description: Server error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid Input
-                  error:
-                    type: string
-                    example: Database query error
+ * paths:
+ *   /routes:
+ *     get:
+ *       summary: Get all routes
+ *       description: Retrieve all available routes from the database.
+ *       tags:
+ *         - Routes
+ *       parameters: []
+ *       responses:
+ *         '200':
+ *           description: Successfully retrieved all routes.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The unique identifier of the route.
+ *                     name:
+ *                       type: string
+ *                       description: The name of the route.
+ *                     description:
+ *                       type: string
+ *                       description: The description of the route.
+ *                       nullable: true
+ *         '500':
+ *           description: Server error occurred while processing the request.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: An unexpected error occurred.
+ *                   error:
+ *                     type: string
+ *                     example: Database query error.
  */
+
 
 router.get('/routes', async (req, res) => {
     const trip = req.query.trip;
@@ -419,65 +421,66 @@ async function validateBooking(req, res,next) {
 }
 /**
  * @swagger
-paths:
-  /bookings:
-    get:
-      summary: Get user's bookings
-      description: Retrieve all bookings made by the authenticated user, including trip details.
-      tags:
-        - Bookings
-      parameters: []
-      responses:
-        '200':
-          description: Successfully retrieved user's bookings.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The unique identifier of the booking.
-                    seat:
-                      type: string
-                      description: The seat number assigned to the booking.
-                    start_at:
-                      type: string
-                      format: date-time
-                      description: The start time of the trip.
-                    end_at:
-                      type: string
-                      format: date-time
-                      description: The end time of the trip.
-                    start_from:
-                      type: string
-                      description: The starting point of the trip.
-        '401':
-          description: Unauthorized access. User is not authenticated.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-        '500':
-          description: Server error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid Input
-                  error:
-                    type: string
-                    example: Database query error
+ * paths:
+ *   /bookings:
+ *     get:
+ *       summary: Get user's bookings
+ *       description: Retrieve all bookings made by the authenticated user, including trip details.
+ *       tags:
+ *         - Bookings
+ *       parameters: []
+ *       responses:
+ *         '200':
+ *           description: Successfully retrieved user's bookings.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The unique identifier of the booking.
+ *                     seat:
+ *                       type: string
+ *                       description: The seat number assigned to the booking.
+ *                     start_at:
+ *                       type: string
+ *                       format: date-time
+ *                       description: The start time of the trip.
+ *                     end_at:
+ *                       type: string
+ *                       format: date-time
+ *                       description: The end time of the trip.
+ *                     start_from:
+ *                       type: string
+ *                       description: The starting point of the trip.
+ *         '401':
+ *           description: Unauthorized access. User is not authenticated.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: Unauthorized
+ *         '500':
+ *           description: Server error occurred while processing the request.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: An unexpected error occurred.
+ *                   error:
+ *                     type: string
+ *                     example: Database query error.
  */
+
 router.get('/bookings', async (req, res) => {
     const sql = 'SELECT  bookings.seat , bookings.id , trips.start_at, trips.end_at, trips.start_from FROM bookings INNER JOIN trips ON trips.id =bookings.trip WHERE bookings.user = ?';
     db.query(sql, [req.userId], (err, results) => {

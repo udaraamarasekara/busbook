@@ -384,52 +384,51 @@ router.get('/bus-owners', async (req, res) => {
   });
 });
 
-// Swagger documentation for /booking (Fetching Bookings for a Trip)
 /**
  * @swagger
-paths:
-  /api/auth/ntc/routes:
-    get:
-      summary: Get all routes
-      description: Retrieve all available routes from the database.
-      tags:
-        - Routes
-      parameters: []
-      responses:
-        '200':
-          description: Successfully retrieved all routes.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The unique identifier of the route.
-                    name:
-                      type: string
-                      description: The name of the route.
-                    description:
-                      type: string
-                      description: The description of the route.
-                      nullable: true
-        '500':
-          description: Server error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid Input
-                  error:
-                    type: string
-                    example: Database query error
-       description: Database error
+ * paths:
+ *   /api/auth/ntc/routes:
+ *     get:
+ *       summary: Get all routes
+ *       description: Retrieve all available routes from the database.
+ *       tags:
+ *         - Routes
+ *       parameters: []
+ *       responses:
+ *         '200':
+ *           description: Successfully retrieved all routes.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The unique identifier of the route.
+ *                     name:
+ *                       type: string
+ *                       description: The name of the route.
+ *                     description:
+ *                       type: string
+ *                       description: The description of the route.
+ *                       nullable: true
+ *         '500':
+ *           description: Server error occurred while processing the request.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: An unexpected error occurred.
+ *                   error:
+ *                     type: string
+ *                     example: Database query error
  */
+
 router.get('/routes', async (req, res) => {
   const sql = 'SELECT * FROM routes';
   db.query(sql, (err, results) => {

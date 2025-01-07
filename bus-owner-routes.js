@@ -437,67 +437,68 @@ router.get('/trip', validateBusForTrip, async (req, res) => {
 });
 /**
  * @swagger
-paths:
-  /route:
-    get:
-      summary: Retrieve route details by ID
-      description: Fetch route details from the database using the provided ID.
-      tags:
-        - Routes
-      parameters:
-        - name: id
-          in: query
-          required: true
-          description: The ID of the route to retrieve.
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully retrieved route details.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The unique identifier of the route.
-                    name:
-                      type: string
-                      description: The name of the route.
-                    description:
-                      type: string
-                      description: The description of the route.
-                      nullable: true
-        '400':
-          description: Missing or invalid ID parameter.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid Input
-                  error:
-                    type: string
-                    example: Invalid ID parameter
-        '500':
-          description: Server error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid Input
-                  error:
-                    type: string
-                    example: Database query error
+ * paths:
+ *   /route:
+ *     get:
+ *       summary: Retrieve route details by ID
+ *       description: Fetch route details from the database using the provided ID.
+ *       tags:
+ *         - Routes
+ *       parameters:
+ *         - name: id
+ *           in: query
+ *           required: true
+ *           description: The ID of the route to retrieve.
+ *           schema:
+ *             type: string
+ *       responses:
+ *         '200':
+ *           description: Successfully retrieved route details.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The unique identifier of the route.
+ *                     name:
+ *                       type: string
+ *                       description: The name of the route.
+ *                     description:
+ *                       type: string
+ *                       description: The description of the route.
+ *                       nullable: true
+ *         '400':
+ *           description: Missing or invalid ID parameter.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: Missing or invalid ID parameter.
+ *                   error:
+ *                     type: string
+ *                     example: Invalid ID parameter.
+ *         '500':
+ *           description: Server error occurred while processing the request.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: An unexpected error occurred.
+ *                   error:
+ *                     type: string
+ *                     example: Database query error.
  */
+
 router.get('/route', async (req, res) => {
   const { id } = req.query;
   const sql = 'SELECT * FROM routes WHERE id = ?';

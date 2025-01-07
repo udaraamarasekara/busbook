@@ -44,7 +44,7 @@ const validateUser = async (req, res, next) => {
 
     // Hash the password and attach to the request object
     const hashedPassword = await bcrypt.hash(password, 10);
-    req.password = hashedPassword;
+    req.body.password = hashedPassword;
 
     // Proceed to the next middleware
     next();
