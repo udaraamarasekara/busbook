@@ -67,7 +67,7 @@ router.post('/register-ntc', validateUser, async (req, res) => {
 
 
   const sql = 'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "ntc")';
-  db.query(sql, [name, email, hashedPassword], (err) => {
+  db.query(sql, [name, email, password], (err) => {
     if (err) {
       if (err.code === 'ER_DUP_ENTRY') {
         return res.status(400).json({ message: 'User already exists' });
