@@ -57,7 +57,7 @@ router.use(verifyAdmin);
 router.post('/register-ntc', validateUser, async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (name.length > 50 || email.length > 50 || password.length > 50) {
+  if (name.length > 50 || email.length > 50 || password.length > 1000) {
     return res.status(400).json({ message: 'Invalid data' });
   }
 
@@ -65,7 +65,6 @@ router.post('/register-ntc', validateUser, async (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
 
   const sql = 'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "ntc")';
   db.query(sql, [name, email, hashedPassword], (err) => {
